@@ -10,7 +10,7 @@ app.use(express.json());
 
 // Mongodb
 
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const uri =
   `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.eqgf9.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
@@ -40,6 +40,13 @@ async function run() {
       const allReviews = await reviewCollection.find().toArray();
       res.send(allReviews);
     })
+
+    app.get("/reviews/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await reviewCollection.findOne(query);
+      res.send(result);
+    });
 
     await client.db("admin").command({ ping: 1 });
     console.log(
